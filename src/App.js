@@ -21,16 +21,38 @@ const alchemy = new Alchemy(settings);
 
 function App() {
   const [blockNumber, setBlockNumber] = useState();
+  const [blockHash, setBlockHash] = useState();
+  const [blockTimestamp, setBlockTimestamp] = useState();
+  const [txTo, setTxTo] = useState();
+  const [txFrom, setTxFrom] = useState();
 
   useEffect(() => {
     async function getBlockNumber() {
       setBlockNumber(await alchemy.core.getBlockNumber());
     }
 
+    async function getTXs() {
+      const blockWithTxs = await alchemy.core.getBlockWithTransactions();
+      console.log(blockWithTxs);
+      setBlockHash(blockWithTxs.hash);
+      setTxTo(blockWithTxs.transactions[0].to);
+      setTxFrom(blockWithTxs.transactions[0].from);
+      };    
+    
+    getTXs();
     getBlockNumber();
   });
 
-  return <div className="App">Block Number: {blockNumber}</div>;
+
+  return <div>
+    <div className="App">Block Number: {blockNumber}</div>
+    <div className="App">Block Hash: {blockHash}</div>
+    <div className="App">Block Timestamp: {blockTimestamp}</div>
+    <br/>
+    <div className="App">THE LAST TRANSACTION</div>
+    <div className="App">From: {txFrom} To: {txTo}</div>
+  </div>  
+  ;
 }
 
 export default App;
